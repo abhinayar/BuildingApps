@@ -1,0 +1,160 @@
+Day 2
+--------
+10/7/16
+
+Looking into actual implementation and slightly less theory. 
+
+Most common options for state management and routing are:
+	FLUX and React Router
+
+https://pub.scotch.io/@kenwheeler (good tuts)
+http://tutorialzine.com/2015/04/first-webapp-react/
+https://bootstrapstudio.io/ (not React BUT interesting)
+http://tutorialzine.com/2014/12/50-useful-libraries-resources-responsive-design/ (useful packages)
+
+React Router
+-------------
+Usually most tutorials will show you simple things (well getting started tuts) like making SINGLE comps. and rendering to DOM. Teaches JSX and props (remember user/userName example snippet)
+
+React Router is needed when thinking about larger applications with more complex routing.
+
+Since React isnt a framework (its a lib) it doesnt provide EVERYTHING an app needs. React Router is a front end router and uses JSX
+
+Example rendering a SINGLE component (ES5 so diff. than last set of instructions)
+
+NOTE THIS IS USING JUST JSX
+	var Home = React.createClass({
+		render: function() {
+			return (<h1>Welcome to the Home Page</h1>);
+	});
+
+	ReactDOM.render((<Home />), document.getElementById('root'));
+
+NOW WITH REACT ROUTER
+	ReactDOM.render((<Router><Route path="/" component={Home} /></Router>), document.getElementById('root'));
+
+
+<Router> and <Route> are DIFFERENT
+	Both reach comps. but they dont create DOM themselves
+	just defines rules on how to render. In the example, <Route? deifnes rule where visitng the home page "/" will render Home comp. into root 
+
+MULTIPLE ROUTES
+The example above, React Router doesn't add any value since we are only rendering single route (could have done it in JSX alone with no Router involved). Power comes when we have MULT. ROUTES that should be rnedered based on the path that is currently active. 
+
+For example:
+	ReactDom.render((
+		<Router>
+			<Route path="/" component={Home} />
+			<Route path="/users" component="{Users} />
+			<Route path="/widgets" component={Widgets} />
+	</Router>
+	), document.getElementByid('root'));
+
+Each Route renders its resp. comps when the path amtches the URl. Only ONE of these comps will be rendered into root at any given time
+
+Router switches routes WITHOUT making requests to the server so each component COULD be its own page
+
+RE-USABLE LAYOUT
+	We want to re-use code as much as possible in production apps (speeds up load time, more modularizedm, etc. etc. etc. )
+	
+	In React we want to be able to swap out content by just passing different cont. to the components
+
+Article had a lot more things about routing. Key points:	
+	-First build static html
+	-Then break this html into React components
+	-Then build it back together using NESTED React Router calls
+	ReactDOM.render((
+  		<Router>
+    			<Route component={MainLayout}>
+      				<Route component={SearchLayout}>
+        				<Route path="users" component={UserList} />
+      				</Route> 
+    			</Route>
+  		</Router>
+	), document.getElementById('root'));
+
+
+	-Components are nested in accordance with how the router nests its routes
+	-JSX follows XML rules so we have self closing tags <div/> etc.
+	-IndexRoutes
+		More than one way to do thigns in React Router
+		 <Route path="/" component={MainLayout}>
+      			<IndexRoute component={Home} />
+
+		is the same as
+
+		<Route component={MainLayout}>
+      			<Route path="/" component={Home} />
+
+	-Some routes may have no attributes. for example:
+		<Route path="product">
+  			<Route path="settings" component={ProductSettings} />
+  			<Route path="inventory" component={ProductInventory} />
+  			<Route path="orders" component={ProductOrders} />
+		</Route>
+
+	-BUT what happens in above example when the user visits www.example.com/products?
+		The way it stands? nothing.
+		We need to include indexRoute
+		<Route path="product">
+  			<IndexRoute component={ProductProfile} />
+  			<Route path="settings" component={ProductSettings} />
+  			<Route path="inventory" component={ProductInventory} />
+  			<Route path="orders" component={ProductOrders} />
+		</Route>
+
+
+	-To link within React Router served pages use <Link> NOT <a>
+		Can use <a> for external links
+		<li><Link to="/">Home</Link></li>
+		Will be rendered to a in DOM^
+
+	-Links can have active states
+		<Link to="/users" activeClassName="active">Users</Link>
+
+	-React also uses browser history tracking. previous versions used a hash-based hisotry (appending # to the end of URL's) but the new one uses a borwserHistory implementation.
+		Problem is that if a user STARTS on www.example.com/property they will get 404 because React Router does NOT access the server.
+		
+		THIS SEEMS BAD.
+		Like would you just serve lightweight pages over the React Router and still access server for muttable, DB accessign data? Seems a bit pointless other than for cleaning up the routing code but I thinkt that's just what its meant for.
+
+		Then again you could write code that is ISOMORPHIC (runs on both client and server).
+		Link: https://strongloop.com/strongblog/node-js-react-isomorphic-javascript-why-it-matters/
+		Link about non isomorphic solution with wildcard server side code: https://github.com/ReactTraining/react-router/blob/master/docs/guides/Histories.md#configuring-your-server
+
+	-LASTLY: ROUTE MATCHING
+		React Router handles route matchinglike other routers
+		<Route path="users/:userId" component={UserProfile} />
+		This will match when the user visits any www.example.com/user/*** path. It will match ANY and ALL configurations so the validation/checking is done on YOUR OWN.
+		Will pass value of :userId as a prop to the UserProfile component (accessed by this.props.params.userId)
+
+CAREFUL!!!!!!!!
+A lot of answers on SOV and other Google Searches turns up results for React Router pre-1.0 Beta. Lot of things deprecated.
+
+Partial list:
+<Route name="" /> is deprecated. Use <Route path="" /> instead.
+<Route handler="" /> is deprecated. Use <Route component="" /> instead.
+<NotFoundRoute /> is deprecated. See Alternative
+<RouteHandler /> is deprecated.
+willTransitionTo is deprecated. See onEnter
+willTransitionFrom is deprecated. See onLeave
+"Locations" are now called "histories".
+
+Full list:
+1.0: https://github.com/reactjs/react-router/blob/b60d6c0351ff91cf04bccdac8c4b6e976aec94ec/upgrade-guides/v1.0.0.md
+2.0: https://github.com/reactjs/react-router/blob/b60d6c0351ff91cf04bccdac8c4b6e976aec94ec/upgrade-guides/v2.0.0.md
+
+API DOCS: https://github.com/reactjs/react-router/blob/master/docs/API.md
+Step-by-step tutorial: https://github.com/reactjs/react-router-tutorial
+
+
+
+
+
+
+
+
+
+
+
+
