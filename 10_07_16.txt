@@ -147,6 +147,8 @@ Full list:
 API DOCS: https://github.com/reactjs/react-router/blob/master/docs/API.md
 Step-by-step tutorial: https://github.com/reactjs/react-router-tutorial
 
+NEXT:
+https://scotch.io/tutorials/build-a-react-flux-app-with-user-authentication
 
 
 
